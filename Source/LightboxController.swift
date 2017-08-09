@@ -11,11 +11,6 @@ public protocol LightboxControllerDismissalDelegate: class {
   func lightboxControllerWillDismiss(_ controller: LightboxController)
 }
 
-public protocol LightboxControllerTouchDelegate: class {
-    
-  func lightboxController(_ controller: LightboxController, didTouch image: LightboxImage, at index: Int)
-}
-
 open class LightboxController: UIViewController {
 
   // MARK: - Internal views
@@ -75,20 +70,21 @@ open class LightboxController: UIViewController {
     let gradient = CAGradientLayer()
     let colors = [UIColor(hex: "090909").alpha(0), UIColor(hex: "040404")]
 
-    view.addGradientLayer(colors)
+    _ = view.addGradientLayer(colors)
     view.alpha = 0
 
     return view
     }()
 
   var screenBounds: CGRect {
-    return UIApplication.shared.delegate?.window??.bounds ?? .zero
+    return UIScreen.main.bounds
   }
 
   // MARK: - Properties
 
   open fileprivate(set) var currentPage = 0 {
     didSet {
+        
       currentPage = min(numberOfPages - 1, max(0, currentPage))
       footerView.updatePage(currentPage + 1, numberOfPages)
       footerView.updateText(pageViews[currentPage].image.text)
@@ -99,7 +95,7 @@ open class LightboxController: UIViewController {
 
       pageDelegate?.lightboxController(self, didMoveToPage: currentPage)
 
-      if let image = pageViews[currentPage].imageView.image, dynamicBackground {
+      if let image = pageViews[currentPage].imageView.image , dynamicBackground {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.125) {
           self.loadDynamicBackground(image)
         }
@@ -142,7 +138,6 @@ open class LightboxController: UIViewController {
 
   open weak var pageDelegate: LightboxControllerPageDelegate?
   open weak var dismissalDelegate: LightboxControllerDismissalDelegate?
-  open weak var imageTouchDelegate: LightboxControllerTouchDelegate?
   open internal(set) var presented = false
   open fileprivate(set) var seen = false
 
@@ -199,8 +194,8 @@ open class LightboxController: UIViewController {
     }
   }
 
-  open override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
+  open override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
 
     if LightboxConfig.hideStatusBar {
       UIApplication.shared.setStatusBarHidden(statusBarHidden, with: .fade)
@@ -246,9 +241,7 @@ open class LightboxController: UIViewController {
     var offset = scrollView.contentOffset
     offset.x = CGFloat(page) * (scrollView.frame.width + spacing)
 
-    var shouldAnimated = view.window != nil ? animated : false
-
-    scrollView.setContentOffset(offset, animated: shouldAnimated)
+    scrollView.setContentOffset(offset, animated: animated)
   }
 
   open func next(_ animated: Bool = true) {
@@ -267,7 +260,7 @@ open class LightboxController: UIViewController {
 
   // MARK: - Layout
 
-  open func configureLayout(_ size: CGSize = UIApplication.shared.delegate?.window??.bounds.size ?? .zero) {
+  open func configureLayout(_ size: CGSize = UIScreen.main.bounds.size) {
     scrollView.frame.size = size
     scrollView.contentSize = CGSize(
       width: size.width * CGFloat(numberOfPages) + spacing * CGFloat(numberOfPages - 1),
@@ -349,16 +342,8 @@ extension LightboxController: UIScrollViewDelegate {
 
 extension LightboxController: PageViewDelegate {
 
-  func remoteImageDidLoad(_ image: UIImage?, imageView: UIImageView) {
-    guard let image = image, dynamicBackground else {
-      return
-    }
-
-    let imageViewFrame = imageView.convert(imageView.frame, to: view)
-    guard view.frame.intersects(imageViewFrame) else {
-      return
-    }
-
+  func remoteImageDidLoad(_ image: UIImage?) {
+    guard let image = image , dynamicBackground else { return }
     loadDynamicBackground(image)
   }
 
@@ -374,8 +359,6 @@ extension LightboxController: PageViewDelegate {
   func pageViewDidTouch(_ pageView: PageView) {
     guard !pageView.hasZoomed else { return }
 
-    imageTouchDelegate?.lightboxController(self, didTouch: images[currentPage], at: currentPage)
-    
     let visible = (headerView.alpha == 1.0)
     toggleControls(pageView: pageView, visible: !visible)
   }

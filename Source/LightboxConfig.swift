@@ -7,7 +7,7 @@ open class LightboxConfig {
 
   public typealias LoadImageCompletion = (_ error: NSError?, _ image: UIImage?) -> Void
 
-  open static var hideStatusBar = true
+  open static var hideStatusBar = false
 
   open static var loadImage: (_ imageView: UIImageView, _ URL: URL, _ completion: LoadImageCompletion?) -> Void = {
     imageView, URL, completion in
@@ -50,8 +50,8 @@ open class LightboxConfig {
 
   public struct CloseButton {
     public static var enabled = true
-    public static var size: CGSize?
-    public static var text = NSLocalizedString("Close", comment: "")
+    public static var size = CGSize(width: 60, height: 25)
+    public static var text = NSLocalizedString("关闭", comment: "")
     public static var image: UIImage?
 
     public static var textAttributes = [
@@ -67,8 +67,8 @@ open class LightboxConfig {
 
   public struct DeleteButton {
     public static var enabled = false
-    public static var size: CGSize?
-    public static var text = NSLocalizedString("Delete", comment: "")
+    public static var size = CGSize(width: 70, height: 25)
+    public static var text = NSLocalizedString("删除", comment: "")
     public static var image: UIImage?
 
     public static var textAttributes = [

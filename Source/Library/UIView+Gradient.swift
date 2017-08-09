@@ -2,7 +2,7 @@ import UIKit
 
 extension UIView {
 
-  @discardableResult func addGradientLayer(_ colors: [UIColor]) -> CAGradientLayer {
+  func addGradientLayer(_ colors: [UIColor]) -> CAGradientLayer {
     if let gradientLayer = gradientLayer { return gradientLayer }
 
     let gradient = CAGradientLayer()
