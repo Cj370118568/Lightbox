@@ -53,10 +53,10 @@ open class LightboxConfig {
     public static var size = CGSize(width: 60, height: 25)
     public static var text = NSLocalizedString("关闭", comment: "")
     public static var image: UIImage?
-
+    
     public static var textAttributes = [
       NSFontAttributeName: UIFont.boldSystemFont(ofSize: 16),
-      NSForegroundColorAttributeName: UIColor.white,
+      NSForegroundColorAttributeName: UIColor(hex: "6178f0"),
       NSParagraphStyleAttributeName: {
         var style = NSMutableParagraphStyle()
         style.alignment = .center

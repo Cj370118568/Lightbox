@@ -43,8 +43,8 @@ open class FooterView: UIView {
     super.init(frame: CGRect.zero)
 
     backgroundColor = UIColor.clear
-    _ = addGradientLayer(gradientColors)
-
+//    _ = addGradientLayer(gradientColors)
+    
     [pageLabel, infoLabel, separatorView].forEach { addSubview($0) }
   }
 
@@ -72,7 +72,7 @@ open class FooterView: UIView {
     if text.isEmpty {
       _ = removeGradientLayer()
     } else if !infoLabel.expanded {
-      _ = addGradientLayer(gradientColors)
+//      _ = addGradientLayer(gradientColors)
     }
   }
 
@@ -108,7 +108,8 @@ extension FooterView: InfoLabelDelegate {
 
   public func infoLabel(_ infoLabel: InfoLabel, didExpand expanded: Bool) {
     resetFrames()
-    _ = expanded ? removeGradientLayer() : addGradientLayer(gradientColors)
+    _ = removeGradientLayer()
+//    _ = expanded ? removeGradientLayer() : addGradientLayer(gradientColors)
     delegate?.footerView(self, didExpand: expanded)
   }
 }
